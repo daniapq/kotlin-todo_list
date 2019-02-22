@@ -1,4 +1,8 @@
 <resources>
-    <string name="app_name">todo_list</string>
-    <string name="action_settings">Settings</string>
+    <string name="app_name">Lista de tareas</string>
+    <string name="add_new_task_dialog_title">Nueva tarea</string>
+    <string name="save">Guardar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="delete">icono eliminar</string>
+    <string name="text">Texto</string>
 </resources>
