@@ -1,57 +1,53 @@
 package com.juliosguz.todo_list
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.app.DialogFragment
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu
-import android.view.MenuItem
-import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.ListView
+import android.widget.Toast
 
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
-    private var listItem: ArrayList<String> = ArrayList()
-    private var listView: ListView? = null
-    private var listAdapter: ArrayAdapter<String>? = null
+    var toDoTaskList: ArrayList<ToDoTask>? = null
+    lateinit var adapter: ToDoTaskAdapter
+    private var listViewItems: ListView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-        fillList()
-        listView = findViewById(R.id.list_view)
-        populateListView()
-
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
+        listViewItems = findViewById(R.id.list_view)
+        fab.setOnClickListener {
+            showTaskItemDialog()
         }
+        toDoTaskList = ArrayList<ToDoTask>()
+        initializeList()
     }
 
-    fun fillList() {
-        listItem.add("Hola")
-        listItem.add("Como estas")
-        listAdapter?.notifyDataSetChanged()
+    private fun initializeList() {
+        adapter = ToDoTaskAdapter(this, toDoTaskList!!)
+        listViewItems!!.setAdapter(adapter)
     }
 
-    private fun populateListView() {
-        listAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, listItem)
-        listView?.adapter = listAdapter
+    fun showTaskItemDialog() {
+        val alert = AlertDialog.Builder(this)
+        val itemEditText = EditText(this)
+        alert.setTitle("Introduzca su tarea")
+        alert.setView(itemEditText)
+        alert.setPositiveButton(R.string.save) { _, _ ->
+            val todoItem = ToDoTask.create()
+            todoItem.text = itemEditText.text.toString()
+            todoItem.done = false
+            toDoTaskList?.add(todoItem)
+            adapter.notifyDataSetChanged()
+            Toast.makeText(this, "Tarea guardada", Toast.LENGTH_SHORT).show()
+        }
+        alert.setNegativeButton(R.string.cancel) { _, _ ->   }
+        alert.show()
     }
 
 }
